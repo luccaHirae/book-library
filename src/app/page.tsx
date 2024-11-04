@@ -1,25 +1,14 @@
 import { Header } from '@/app/components/header';
 import { BookCard } from '@/app/components/book-card';
+import { listBooks } from '@/app/actions';
 import { type Book } from '@/types';
 
-const books: Book[] = [
-	{
-		id: 1,
-		title: 'The Great Adventure',
-		description: 'A book about the great adventure of life',
-		author: 'John Doe',
-		price: 19.99,
-	},
-	{
-		id: 2,
-		title: 'Learn Vector Calculus',
-		description: 'A book about vector calculus',
-		author: 'Jane Doe',
-		price: 29.99,
-	},
-];
+export const dynamic = 'fornce-dynamic';
 
-export default function Home() {
+export default async function Home() {
+	const response = await listBooks();
+	const books: Book[] = response.data;
+
 	return (
 		<div>
 			<Header />

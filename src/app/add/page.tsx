@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/app/components/header';
+import { addSingleBook } from '@/app/actions';
 import { type Book } from '@/types';
 
 export const AddBook = () => {
@@ -36,7 +37,7 @@ export const AddBook = () => {
 		e.preventDefault();
 
 		try {
-			// TODO: Update book
+			await addSingleBook(book);
 
 			push('/');
 			refresh();
@@ -99,6 +100,7 @@ export const AddBook = () => {
 						id='price'
 						name='price'
 						placeholder='Enter book price'
+						step='0.01'
 						value={book.price}
 						onChange={handleChange}
 						required

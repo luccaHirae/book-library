@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/app/components/header';
+import { deleteSingleBook, editSingleBook, getSingleBook } from '@/app/actions';
 import { type Book } from '@/types';
 
 interface Props {
@@ -35,10 +36,11 @@ export const BookDetails = ({ params }: Props) => {
 		e.preventDefault();
 
 		try {
-			// TODO: Update book
-
-			push('/');
-			refresh();
+			if (book) {
+				await editSingleBook(book, book.id);
+				push('/');
+				refresh();
+			}
 		} catch (error) {
 			setError('Failed to update book');
 		}
@@ -48,10 +50,11 @@ export const BookDetails = ({ params }: Props) => {
 		e.preventDefault();
 
 		try {
-			// TODO: Delete book
-
-			push('/');
-			refresh();
+			if (book) {
+				await deleteSingleBook(book.id);
+				push('/');
+				refresh();
+			}
 		} catch (error) {
 			setError('Failed to delete book');
 		}
@@ -59,17 +62,16 @@ export const BookDetails = ({ params }: Props) => {
 
 	useEffect(() => {
 		(async () => {
-			const book = {
-				id: 2,
-				title: 'Learn Vector Calculus',
-				description: 'A book about vector calculus',
-				author: 'Jane Doe',
-				price: 29.99,
-			};
+			const response = await getSingleBook(parseInt(params.id));
 
-			setBook(book);
+			if (!response || response.data.message === 'not found') {
+				push('/');
+				return;
+			}
+
+			setBook(response.data);
 		})();
-	}, [params.id]);
+	}, [params.id, push]);
 
 	return (
 		<div>
@@ -130,6 +132,7 @@ export const BookDetails = ({ params }: Props) => {
 								id='price'
 								name='price'
 								placeholder='Enter book price'
+								step='0.01'
 								value={book.price}
 								onChange={handleChange}
 								required
